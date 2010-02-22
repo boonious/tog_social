@@ -34,11 +34,11 @@ require 'tog_oauth_controller_methods'
 
 Tog::Plugins.helpers ProfilesHelper, GroupsHelper, SharingsHelper
 
-Tog::Interface.sections(:site).add "Profiles", "/profiles"     
-Tog::Interface.sections(:site).add "Groups", "/groups"     
-Tog::Interface.sections(:member).add "My groups", "/member/groups"  
-Tog::Interface.sections(:member).add "My sharings", "/member/sharings"     
-Tog::Interface.sections(:admin).add "Groups", "/admin/groups"
+#Tog::Interface.sections(:site).add "Profiles", "/profiles"     
+#Tog::Interface.sections(:site).add "Groups", "/groups"     
+#Tog::Interface.sections(:member).add "My groups", "/member/groups"  
+#Tog::Interface.sections(:member).add "My sharings", "/member/sharings"     
+#Tog::Interface.sections(:admin).add "Groups", "/admin/groups"
 
 Tog::Search.sources << "Group"
 Tog::Search.sources << "Profile"     
