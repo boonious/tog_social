@@ -21,6 +21,14 @@ module GroupsHelper
     end
   end
 
+  # return either group link or http://baseurl/user_name link to user profile page
+  def group_or_homepage_link(group)
+    if group.type.to_s == 'Homepage'
+      link_to title_for_object(group), "/" + User.find(group.user_id).login
+    else
+      link_to title_for_object(group), group
+    end
+  end
 
   def last_groups(limit=3)
     Group.find(:all,:conditions => ["state= ? and private = ?", 'active', false],:order => "created_at desc", :limit => limit)
