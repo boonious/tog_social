@@ -106,8 +106,9 @@ class Group < ActiveRecord::Base
     raise "Implement this..."
   end
   
-  def share(user, shareable_type, shareable_id)
-    params = {:shareable_type => shareable_type, :shareable_id => shareable_id}   
+  #  Additional 'options' parameter for published_at info (later)
+  def share(user, shareable_type, shareable_id, options)
+    params = {:shareable_type => shareable_type, :shareable_id => shareable_id}.merge! options
     return if self.sharings.find :first, :conditions => params
     self.sharings.create params.merge!({:user_id => user.id})
   end
