@@ -15,7 +15,47 @@
   <div class="text">
     <p><%= @group.description %></p>
   </div>
+
+	<% if current_user and @group.members.include?(current_user) %>
+		<div>
+	    	<% form_for :shared_object, @shared_object, :url => member_create_shared_object_path(@group.id), :html => {:method => "post"} do |f| -%>
+				<fieldset>
+					<h2>Share, New Post <span style="font-weight:normal;font-size:80%;"> - message, blog, link etc.</span></h2>
+				   <p>
+						<%= f.text_area :content, :class=>"fieldbox", :style=>"width:450px; height:100px;" -%>
+						<div style="margin:10px 0 0 0">
+							<%= submit_tag 'Share this!', :class => 'button mainaction' %>
+							<span style="margin:0 0 0 20px;">
+								<%= link_to 'Create using full editor', member_new_shared_object_path(@group.id) %>
+							</span>
+					   </div>
+				   </p>
+				</fieldset>
+	  		<% end -%>
+	   </div>
+	<% elsif current_user %>
+		<div class="portletK">
+			<p><%= link_to I18n.t('tog_social.groups.site.join'), join_group_path(@group) %> to post something here.. </p>
+		</div>
+
+	<% end %>
 </div> <!-- /.detail1 --> 
+
+<% for sharing in @sharings %>
+
+	<div id="sharing_<%= sharing.id %>" style="background-color:#ddd; padding: 1em 1em 0 1em; margin: 1em 0 0 0;">
+		<%= render :partial => '/shared/shared_object_properties_actions', :locals => {:sharing => sharing, :profile => @profile} %>
+	</div>
+
+	<div style="background-color:#eee; padding: 1em;">
+		<% if !sharing.shareable.title.blank? %>
+			<h3><%= link_to sharing.shareable.title, shared_object_path(sharing.shareable.id) %></h3>
+		<% end %>
+		<%= sanitize(textilize(sharing.shareable.content[0..500]), :tags => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_tags').split, :attributes => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_attributes').split) %> <%= link_to("More..",  shared_object_path(sharing.shareable.id)) unless sharing.shareable.content.size < 500 %>
+	</div>
+
+ <% end %>
+
 
 <% content_for :sidebar do %>
 

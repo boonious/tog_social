@@ -33,6 +33,27 @@ class GroupsController < ApplicationController
   end
 
   def show
+    # redirect to user profile if attempt to access User own private group is made 
+    # - Homepage group subclass if only used as a container of objects which 
+    # are staged in the profile page instead, for the time being.
+    redirect_to '/' + User.find(@group.user_id).login if @group.type && @group.type=='Homepage'
+    
+    @order = params[:order] || 'created_at'
+    @page = params[:page] || '1'
+    @asc = params[:asc] || 'desc'
+
+     # All shared objects related to this group
+     if @group.author == current_user
+       query_conditions= ['shared_to_id = ?', @group.id]
+     else
+      if current_user
+        query_conditions=['shared_to_id = ? AND (state = ? OR user_id = ?)', @group.id, "published", current_user.id]
+      else
+        query_conditions=['shared_to_id = ? AND state = ?', @group.id, "published"]
+      end
+     end
+     @sharings = Share.find(:all, :conditions => query_conditions, :order => "#{@order} #{@asc}").paginate  :per_page => 10, :page => @page
+     store_location
   end
 
   def members
