@@ -1,0 +1,26 @@
+<div class="titleB">Share the Post with</div>
+
+<br/>
+<%= error_messages_for :shared_object %>
+
+<% if current_user.groups.size > 1 %>
+<% form_for :shared_object, @shared_object, :url=> member_update_shared_object_path(@shareable.id),:html => { :method => :put } do |f| -%>
+	<fieldset>
+		  	<h3>My subscribed groups <span style="font-weight:normal; font-size:88%;"> - unchecked to remove share</span></h3>
+			<p style="background-color:#eee; padding: 10px 0 10px 10px; }">	
+				<% for group in current_user.groups[1..-1] %>
+					<%= check_box_tag 'other_group[]', group.id, @shared_to.include?(group.id)  %>
+					<%= group.name %>
+					<br/>
+				<% end %>
+			</p>
+	</fieldset>
+	<div style="margin:20px 0 0 0">
+		<%= submit_tag 'Update This', :class => 'button mainaction' %> <%= submit_tag 'Cancel', :class => 'button mainaction' %>
+	</div>
+<% end %>
+<% else %>
+	<p>
+		<%= link_to 'Create or join some groups to share objects with.', '/groups' %>
+	</p>
+<% end %>

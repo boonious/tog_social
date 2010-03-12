@@ -1,0 +1,35 @@
+<% if @shared_object.state == 'shared' || @shared_object.user == current_user %>
+	<div class="detail detail1">
+		<div class="image"><%=icon_for_profile(@shared_object.user.profile, 'small')%></div>
+	   <div class="title"><%=@shared_object.user.profile.full_name%></div>
+	   <div class="subtitle"><%= I18n.t('tog_social.profiles.model.username') %>: <%=@shared_object.user.login%></div>
+ 	
+		<% if !@shared_object.title.blank? %>
+		<h2><%= @shared_object.title %></h2>
+		<% end %>
+		<p>
+			From <%= link_to @shared_object.user.profile.full_name, '/' + @shared_object.user.login %>,
+			about <%= time_ago_in_words(@shared_object.created_at) %> ago - <%= I18n.l(@shared_object.created_at, :format => :short) %>.		
+		</p>
+		<p>
+			<% if @shared_object.state == "draft" && current_user == @shared_object.user %>
+				<strong>Only you can see this</strong> -
+				<%= link_to "Make Public", member_publish_shared_object_path(@shared_object.id) %> |
+			<% end %>
+			
+			<% if current_user == @shared_object.user %>
+				<%= link_to "Edit", edit_member_shared_object_path(@shared_object.id) %> |
+				<%= link_to "Delete", member_delete_shared_object_path(nil,@shared_object.id,:all), :method => :post %>
+			<% end %>			
+		</p>
+		<div>
+			<%= sanitize(markdown(@shared_object.content), :tags => (Tog::Plugins.settings :tog_core, 'sanitized.allowed_tags').split, :attributes => (Tog::Plugins.settings :tog_core, 'sanitized.allowed_attributes').split) %>
+		</div>
+	</div>
+<% else %>
+	<div class="detail detail1">
+		<p>This object is not currently available.</p>
+	</div>
+<% end %>
+
+

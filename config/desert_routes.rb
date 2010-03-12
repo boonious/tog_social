@@ -2,6 +2,7 @@
 # add <tt>map.resources</tt>, here you would add just <tt>resources</tt>
 
 resources :profiles
+resources :shared_objects
 
 resources :streams, :only => [:index, :show], :member => {:network => :get}
 
@@ -14,6 +15,7 @@ resources :groups, :collection => { :search => :get }, :member => { :join => :ge
 namespace(:member) do |member|
   member.resources :profiles
   member.resources :groups
+  member.resources :shared_objects
   member.with_options(:controller => 'groups') do |group|
     group.group_pending_members '/:id/members/pending',         :action => 'pending_members'
     group.group_accept_member   '/:id/members/:user_id/accept', :action => 'accept_member'
@@ -32,6 +34,16 @@ namespace(:member) do |member|
     sharing.sharings '/sharings', :action => 'index'
     sharing.destroy_sharing '/sharings/:group_id/:id', :action => 'destroy', :conditions => { :method => :delete }      
 #    sharing.destroy_sharing '/group/:id/remove/:shareable_type/:shareable_id', :action => 'destroy', :method => :delete  
+  end
+  member.with_options(:controller => 'shared_objects') do |shared_object|
+     shared_object.new_shared_object '/:group_id/shared_objects/new', :action =>'new'
+     shared_object.create_shared_object '/shared_objects/:group_id', :action =>'create', :conditions => { :method => :post}
+     shared_object.update_shared_object '/shared_objects/:id', :action => 'update', :conditions => { :method => :put }
+     shared_object.delete_shared_object '/:group_id/shared_objects/:id/delete/:mode', :action => 'delete', :conditions => {:method => :post}
+     shared_object.destroy_shared_object '/:group_id/shared_objects/:id/destroy/:mode', :action => 'destroy', :conditions => {:method => :delete}
+     shared_object.publish_shared_object '/shared_objects/:id/publish', :action => 'publish'
+     shared_object.approve_sharing '/sharings/:id/approve', :action => 'approve'
+     shared_object.share_existing_shared_object '/shared_objects/:id/share', :action =>'share'
   end
 end
 

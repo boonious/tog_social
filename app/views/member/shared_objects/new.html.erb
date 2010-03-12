@@ -1,0 +1,29 @@
+<div class="titleB">Create a New Post</div>
+
+<br/>
+<%= error_messages_for :shared_object %>
+
+<% form_for :shared_object, @shared_object, :url => member_create_shared_object_path do |f| -%>
+	<fieldset>
+		<%= render :partial => 'common_form', :locals => {:f => f}%>
+		<% if current_user.groups.size > 1 %>
+			Also share this with the following groups which I've subscribed to: 
+			<p style="background-color:#eee; padding: 10px 0 10px 10px; }">	
+				<% for group in current_user.groups[1..-1] 
+					if params[:group_id]==group.id.to_s %>
+						<%= check_box_tag '', group.id, true, :disabled => true %>
+						<%= group.name %> (posting to this group)
+						<br/>
+					<% else %>
+						<%= check_box_tag 'other_group[]', group.id, @shared_to.include?(group.id)  %>
+						<%= group.name %>
+						<br/>
+					<% end %>
+				<% end %>
+			</p>	
+		<% end %>
+	</fieldset>
+	<div style="margin:20px 0 0 0">
+		<%= submit_tag 'Create This', :class => 'button mainaction' %> <%= submit_tag 'Cancel', :class => 'button mainaction' %>
+	</div>
+<% end %>

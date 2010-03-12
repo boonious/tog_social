@@ -1,0 +1,53 @@
+<div class="detail detail1">
+	<h2>Delete</h2>
+	
+	<% if @related_sharings.size > 1 %>
+		<p>You are about to delete the post shown below. Are you sure? This post has been shared with:</p>
+		<ul>
+		<%	for related_sharing in @related_sharings
+			related_sharing_group = related_sharing.shared_to %>
+			<li><%= title_link_for_group_object(related_sharing_group) %></li>
+		<% end %>
+		</ul>
+		<% form_for :shared_object, @shared_object, :url => member_destroy_shared_object_path, :html => {:method => :delete} do |f| -%>
+	  	 	<div style="margin:0 0 0 20px;">
+				<%= submit_tag 'Delete All', :class => 'button mainaction', :style=>"background-color:#e40600; font-weight:bold; font-size:110%; padding:0.5em 1em; border: none;" %>
+				<%= submit_tag 'Cancel', :class => 'button mainaction', :style=>"font-weight:bold; font-size:110%; padding:0.5em 1em; border: none;" %>
+				Or <%= link_to 'Edit Sharing', member_share_existing_shared_object_path %>
+			</div>
+	  	<% end -%>
+	<% else %>
+		<%if params[:mode] =='sharing'%>
+			<p>You are about to remove the following post from 
+				<%= link_to @shared_to.name, @shared_to %> (the original post still exists unless 
+				<%= link_to @shareable.user.profile.full_name, profile_path(@shareable.user.profile) %> choose to delete it). Are you sure?</p>
+			<% form_for :shared_object, @shared_object, :url => member_destroy_shared_object_path, :html => {:method => :delete} do |f| -%>
+				<div style="margin:0 0 0 20px;">
+					<%= submit_tag 'Remove from Group', :class => 'button mainaction', :style=>"background-color:#e40600; font-weight:bold; font-size:110%; padding:0.5em 1em; border: none;" %>
+					<%= submit_tag 'Cancel', :class => 'button mainaction', :style=>"font-weight:bold; font-size:110%; padding:0.5em 1em; border: none;" %>
+				</div>
+			<% end -%>
+		<% else %>
+		   <p>You are about to delete the post shown below. Are you sure?</p>
+			<% form_for :shared_object, @shared_object, :url => member_destroy_shared_object_path, :html => {:method => :delete} do |f| -%>
+				<div style="margin:0 0 0 20px;">
+					<%= submit_tag 'Delete', :class => 'button mainaction', :style=>"background-color:#e40600; font-weight:bold; font-size:110%; padding:0.5em 1em; border: none;" %>
+					<%= submit_tag 'Cancel', :class => 'button mainaction', :style=>"font-weight:bold; font-size:110%; padding:0.5em 1em; border: none;" %>
+				</div>
+			<% end -%>
+		<% end %>
+	<% end %>
+	    
+	<div style="background-color:#ddd; padding: 1em 1em 0 1em; margin: 2em 0 0 0;">		
+		<p>
+			Submitted by <%= link_to @shareable.user.profile.full_name, profile_path(@shareable.user.profile) %>,
+			about <%= time_ago_in_words(@shareable.created_at) %> ago - <%= I18n.l(@shareable.created_at, :format => :short) %>.	 
+		</p>
+	</div>
+	<div style="background-color:#eee; padding: 1em;">
+		<% if !@shareable.title.blank? %>
+			<h3><%= link_to @shareable.title, shared_objects_path + '/' + @shareable.id.to_s %></h3>
+		<% end %>
+		<%= sanitize(textilize(@shareable.content[0..500]), :tags => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_tags').split, :attributes => (Tog::Plugins.settings :tog_core, 'sanitized.comments.allowed_attributes').split) %> <%= link_to("More..",  shared_objects_path + '/' + @shareable.id.to_s) unless @shareable.content.size < 500 %>
+		</div>
+</div>

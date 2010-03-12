@@ -1,0 +1,10 @@
+<p><label for="post_title">Title</label><br/><%= f.text_field :title, :class=>"wide" %></p>	
+<label for="post_body">Content - post (message, blog), link etc.</label><br/><%= f.text_area :content, :class=>"fieldbox wide" %>
+<p><label for="post_tag_list">Tags, categories (separated by ,)</label><br/><%= f.text_field :tag_list, :class=>"fieldbox wide" %></p>
+ 
+<p><label for="post_state">Status</label>
+	<%= f.select "state", options_for_select([[ "Share this now!", "shared" ], ["Draft - not visible publically", "draft" ]], @shareable.state) -%>
+				<!--label for="update_published_at"><%= check_box_tag "update_published_at", "1" %> "Publish this at"</label-->
+				<!--%= f.datetime_select :published_at-%-->
+</p>
+	
