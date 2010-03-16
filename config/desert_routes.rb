@@ -3,6 +3,7 @@
 
 resources :profiles
 resources :shared_objects
+resources :homepages
 
 resources :streams, :only => [:index, :show], :member => {:network => :get}
 
