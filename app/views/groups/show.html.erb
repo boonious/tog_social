@@ -27,6 +27,12 @@
 							<%= submit_tag 'Share this!', :class => 'button mainaction' %>
 							<span style="margin:0 0 0 20px;">
 								<%= link_to 'Create using full editor', member_new_shared_object_path(@group.id) %>
+								<!-- option only available for federated user logged in with Twitter account -->
+								<% unless current_user.service_provider.nil? %>
+									<% if current_user.service_provider.include? 'twitter' %>
+										<span style="margin-left: 2em;"><%= check_box_tag :twitter %> Send to Twitter</span>
+									<% end %>
+								<% end %>
 							</span>
 					   </div>
 				   </p>

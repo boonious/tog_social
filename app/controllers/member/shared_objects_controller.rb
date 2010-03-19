@@ -45,6 +45,15 @@ class Member::SharedObjectsController < Member::BaseController
       
       # The group to share this with
       shared_to = Group.find params[:group_id] 
+
+      # Send to Twitter if a twitter user opt to do so
+      twitter_message = ""
+      if params[:twitter] && current_user.service_provider.include?('twitter')
+        current_user.consumer_tokens.each do | token |
+          token.client.update params[:shared_object][:content] if token.instance_of? TwitterToken
+          twitter_message = " and to Twitter"
+        end
+      end
      
       # User can also share the object simultaneous to other subscribed commons (groups)
       if params[:other_group]
@@ -54,12 +63,12 @@ class Member::SharedObjectsController < Member::BaseController
           a_group.share(current_user,  @shareable.type,  @shareable.id, sharing_options)  
         end
         user_message = @groups.collect { |x| current_user.groups.first == x ? current_user.profile.full_name : x.name }
-        flash[:ok] = "Object shared with " + user_message.join(', ')
+        flash[:ok] = "Object shared with " + user_message.join(', ') + twitter_message
       else
         # Share to the current group
         shared_to.share(current_user,  @shareable.type,  @shareable.id, sharing_options) 
         user_message = current_user.groups.first == shared_to ? current_user.profile.full_name : shared_to.name + ' group'
-        flash[:ok] = "Object shared with " + user_message
+        flash[:ok] = "Object shared with " + user_message + twitter_message
       end      
       
       #Save a copy of the shareable to user's own profile
